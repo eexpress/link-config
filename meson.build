@@ -15,4 +15,6 @@ executable('link-config',
 			gresource,
            'link-config.vala',
            dependencies: [libadwaita, gtk4, posix],
-           install : true)
+           install : true,
+#~            install_dir : '..',
+           )

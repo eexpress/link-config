@@ -180,6 +180,7 @@ async void on_chdir_clicked () {
 void refreshall(string s){
 	WorkDir = s;
 	Posix.chdir(WorkDir);	//切换工作目录
+	Git_Ls = ex("git ls");
 	refreshListBox();		//刷新
 	string p = WorkDir.replace(HomeDir,"~");
 //~ 	row.subtitle="current working directory is: <span foreground=\"blue\"><b>%s</b></span>".printf(p);

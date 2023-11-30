@@ -1,6 +1,6 @@
 # link.config
-collect all important config files in git directory, link back backup files to origianl position.
+collect all important config files into git directory, link back those files to origianl position.
 
 ---
 
-![](link-config.adw.png)
+![](/img/link-config.adw.png)

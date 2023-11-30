@@ -1,21 +1,6 @@
-//~ ⭕ valac --pkg gtk4 --pkg posix link-config.vala
-//~ valac --pkg libadwaita-1  --pkg gtk4 --pkg posix "%f"
-//~ ⭕ ./link-config
-
-//~ TODO 使用meson
-//~ TODO Gresource使用
-//~ ⭕ glib-compile-resources --generate-header res.github.xml
-//~ ⭕ glib-compile-resources --generate-source res.github.xml
-//~ ⭕ l res.github.*
-//~ res.github.c  res.github.h  res.github.xml
-//~ ⭕ valac --pkg libadwaita-1 --pkg gtk4 --pkg posix --gresources=res.github.xml res.github.c link-config.vala
-//~ ⭕ lt link-config
-//~ -rwxr-xr-x. 1 eexpss 65K 11-30 10:03 link-config
-//~ ⭕ cp link-config link-config-g
-//~ ⭕ valac --pkg libadwaita-1 --pkg gtk4 --pkg posix link-config.vala
-//~ ⭕ md5sum  link-config link-config-g
-//~ 1abce33ac746debb383cf82bd3bc92db  link-config
-//~ 1abce33ac746debb383cf82bd3bc92db  link-config-g
+//~ valac --pkg libadwaita-1 --pkg gtk4 --pkg posix "%f"
+//~ ⭕ cd build/; ninja
+//~ 只有 meson 调用的 gnome.compile_resources 能自动编译 xml，并且注册好。
 
 using Gtk;
 
@@ -61,7 +46,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 //~ 窗口
 	var window = new ApplicationWindow(self as Gtk.Application);
 	window.title = appTitle;
-	window.set_default_size(440, 420);
+	window.set_default_size(440, 480);
 	window.resizable = true;
 //~ 底盒
 	var box = new Box(Orientation.VERTICAL, 5); box.set_margin_start(10);
@@ -144,13 +129,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	box.append(listbox);
 	box.append(butbox);
 	box.append(msg);
-//~ 	GResource *res_get_resource ();
-	var res = Resource.load("/home/eexpss/bin/config/res.github.gresource");
-	res._register();
-//~ 	var img = new Image.from_resource ("resource:///io.github.eexpress/github.png");
-	var img = new Image.from_file("/home/eexpss/bin/config/github.png");
-//~ 	var icon = new Icon.new_for_string("resource:///io.github.eexpress/github.png");
-//~ 	781b271c3b08abd01498296a6c0029f4  link-config
+	var img = new Image.from_resource ("/io.github.eexpress/github.png");
 
 	box.append(img);
 	window.present ();

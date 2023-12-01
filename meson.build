@@ -2,6 +2,14 @@ project('link-config', ['c', 'vala'],
   version : '0.1',
   default_options : ['warning_level=3'])
 
+#~ conf_data = configuration_data()
+#~ conf_data.set('GETTEXT_PACKAGE', meson.project_name())
+
+add_project_arguments(
+  '-DGETTEXT_PACKAGE="' + meson.project_name() + '"',
+  language: 'c',
+)
+
 libadwaita = dependency('libadwaita-1')
 gtk4 = dependency('gtk4')
 posix = meson.get_compiler('vala').find_library('posix')
@@ -17,4 +25,5 @@ executable('link-config',
            dependencies: [libadwaita, gtk4, posix],
            install : true,
 #~            install_dir : '..',
+#~ meson.current_source_dir()
            )

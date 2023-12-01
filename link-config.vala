@@ -27,14 +27,6 @@ string HomeDir;
 string WorkDir;
 string Flastpath;
 
-const string[] btarr = {	// vala的二维数组是废品
-// 图标，标签，提示
-	"document-new-symbolic|添加备份|移动源文件过来，在源位置建立链接",
-	"edit-delete-symbolic|取消备份|删除源链接，移动备份文件到源位置",
-	"insert-link|全部恢复|在源位置强行建立全部链接",
-	"go-home-symbolic|切换目录|切换当前工作目录"
-};
-
 //~ --------------------------------------------------------------------
 int main(string[] args) {
 	var app = new Adw.Application(appID, ApplicationFlags.DEFAULT_FLAGS);
@@ -53,11 +45,9 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 //~ 列表
 	listbox = new ListBox();
 	listbox.hexpand = true;
-//~ 	listbox = new ListBox({hexpand = true});
 	var x = new Label("");
 //~ 	x.set_markup("<span foreground=\"grey\" size=\"1000%\">空</span>");
-	x.set_markup("<span foreground=\"grey\" size=\"300%\">拖放文件目录到此</span>");
-//~ 	x.set_markup(_("<span foreground=\"grey\" size=\"300%\">拖放文件目录到此</span>"));
+	x.set_markup(_("<span foreground=\"grey\" size=\"300%\">拖放文件目录到此</span>"));
 	listbox.set_placeholder(x);
 //~ 列表的拖放
 	var string_drop = new DropTarget(GLib.Type.STRING, Gdk.DragAction.COPY);
@@ -69,14 +59,12 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	  });
 //~ 标题
 	row = new Adw.ActionRow();
-//~ 	row.title=_("Config Files");
-//~ 	row.title="Config Files";
-	row.title="<b>配置备份列表</b>";
-	string tip = """图例说明
+	row.title=_("<b>配置备份列表</b>");
+	string tip = _("""图例说明
 	源配置：🔗 正常 💔 坏链接 🅕 非链接 ␀ 无文件
 	git管理：☂️ 是 ✖️ 否
 
-拖放目录或者文件到下面的列表，均可建立备份""";
+拖放目录或者文件到下面的列表，均可建立备份""");
 	row.set_tooltip_text(tip);
 //~ 信息条
 	msg = new Label("");
@@ -85,6 +73,13 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	msg.set_markup("<b>%s</b>. Ver 0.2.".printf(appID));
 //~ 按键组
 	var butbox = new Box(Orientation.HORIZONTAL, 5); box.set_margin_start(10);
+	string[] btarr = {	// vala的二维数组是废品
+	// 图标，标签，提示
+		_("document-new-symbolic|添加备份|移动源文件过来，在源位置建立链接"),
+		_("edit-delete-symbolic|取消备份|删除源链接，移动备份文件到源位置"),
+		_("insert-link|全部恢复|在源位置强行建立全部链接"),
+		_("go-home-symbolic|切换目录|切换当前工作目录")
+	};
 	for (var i = 0; i < btarr.length; i++){
 		string[] s = btarr[i].split("|");
 		var b = new Adw.ButtonContent();
@@ -98,7 +93,6 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 		butbox.append(bt);
 	}
 // 获取执行文件路径，并切换工作目录。
-//~ 	HomeDir = Environment.get_variable("HOME");
 	HomeDir = Environment.get_home_dir();
 	Git_Ls = ex("git ls");
 	try{
@@ -162,13 +156,11 @@ void on_restore_clicked(){
 	pluslist.foreach ((plusfile) => {
 		rmfile(plusfile, false);
 	});
-	msg.set_markup("已经全部恢复配置的链接。");
-//~ 	msg.set_markup(_("已经全部恢复配置的链接。"));
+	msg.set_markup(_("已经全部恢复配置的链接。"));
 }
 //~ --------------------------------------------------------------------
 async void on_chdir_clicked () {
-	File ? f = yield filedialog("选择需要切换的目录", false);
-//~ 	File ? f = yield filedialog(_("选择需要切换的目录"), false);
+	File ? f = yield filedialog(_("选择需要切换的目录"), false);
 	if (f == null) return;
 	refreshall(f.get_parse_name());
 //~ 	保存最后的目录
@@ -183,14 +175,11 @@ void refreshall(string s){
 	Git_Ls = ex("git ls");
 	refreshListBox();		//刷新
 	string p = WorkDir.replace(HomeDir,"~");
-//~ 	row.subtitle="current working directory is: <span foreground=\"blue\"><b>%s</b></span>".printf(p);
-	row.subtitle="当前工作目录：<span foreground=\"blue\"><b>%s</b></span>".printf(p);
-//~ 	row.subtitle=_("current working directory is: ")+"<span foreground=\"blue\"><b>%s</b></span>".printf(p);
+	row.subtitle=_("当前工作目录：")+"<span foreground=\"blue\"><b>%s</b></span>".printf(p);
 }
 //~ --------------------------------------------------------------------
 async void on_add_clicked () {
-	File ? f = yield filedialog("选择需要收集备份的配置文件", true);
-//~ 	File ? f = yield filedialog(_("选择需要收集备份的配置文件"), true);
+	File ? f = yield filedialog(_("选择需要收集备份的配置文件"), true);
 	if (f == null) return;
 	if(checkfile(f.get_parse_name())) addfile(f);
 }
@@ -214,13 +203,10 @@ async File filedialog(string Title, bool Select_file){
 }
 //~ --------------------------------------------------------------------
 bool checkfile(string fn){
-	if(!FileUtils.test(fn, FileTest.EXISTS)){msg.set_markup("⚠️ 文件不存在。"); return false;}
-//~ 	if(!FileUtils.test(fn, FileTest.EXISTS)){msg.set_markup(_("⚠️ 文件不存在。")); return false;}
-	if(FileUtils.test(fn, FileTest.IS_SYMLINK)){msg.set_markup("⚠️ 不能备份链接文件。"); return false;}
-//~ 	if(FileUtils.test(fn, FileTest.IS_SYMLINK)){msg.set_markup(_("⚠️ 不能备份链接文件。")); return false;}
+	if(!FileUtils.test(fn, FileTest.EXISTS)){msg.set_markup(_("⚠️ 文件不存在。")); return false;}
+	if(FileUtils.test(fn, FileTest.IS_SYMLINK)){msg.set_markup(_("⚠️ 不能备份链接文件。")); return false;}
 	if (! fn.contains(HomeDir+"/."))
-		{ msg.set_markup("⚠️ 只能备份家目录下的隐藏目录或文件。"); return false; }
-//~ 		{ msg.set_markup(_("⚠️ 只能备份家目录下的隐藏目录或文件。")); return false; }
+		{ msg.set_markup(_("⚠️ 只能备份家目录下的隐藏目录或文件。")); return false; }
 	return true;
 }
 //~ --------------------------------------------------------------------

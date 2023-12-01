@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schemalist>
+  <schema id="io.github.eexpress.link.config"
+    path="/io/github/eexpress/link/config/">
+
+    <key name="lastpath" type="s">
+      <default>"~/bin/config/"</default>
+      <description>The last working directory.</description>
+    </key>
+  </schema>
+</schemalist>
+

@@ -11,8 +11,6 @@ using Gtk;
 //~ [CCode(cname="GETTEXT_PACKAGE")] extern GResource *res_get_resource ();
 //~ 	Gsettings 需要xml文件，需要注册，并且在系统目录留下文件。比如 /usr/share/glib-2.0/schemas/。不如直接rc文件了。
 //~ 	gsetting 设置上一次工作目录
-//~ 	var ss = new GLib.Settings(appID);	// GLib-GIO-ERROR **: 23:07:43.191: Settings schema 'io.github.eexpress.link.config' is not installed
-//~ 	print("lastpath = %s\n", ss.get_string("lastpath"));
 
 const string appID = "io.github.eexpress.link.config";
 const string appTitle = "Link Config";
@@ -30,6 +28,8 @@ string Flastpath;
 //~ --------------------------------------------------------------------
 int main(string[] args) {
 	var app = new Adw.Application(appID, ApplicationFlags.DEFAULT_FLAGS);
+//~ 	var ss = new GLib.Settings(appID);	// GLib-GIO-ERROR **: 23:07:43.191: Settings schema 'io.github.eexpress.link.config' is not installed
+//~ 	print("lastpath = %s\n", ss.get_string("lastpath"));
 	app.activate.connect(onAppActivate);
 	return app.run(args);
 }
@@ -70,7 +70,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	msg = new Label("");
 	msg.halign = Align.START;
 	msg.margin_bottom=10;
-	msg.set_markup("<b>%s</b>. Ver 0.2.".printf(appID));
+	msg.set_markup("<b>%s</b>. Ver 0.21.".printf(appID));
 //~ 按键组
 	var butbox = new Box(Orientation.HORIZONTAL, 5); box.set_margin_start(10);
 	string[] btarr = {	// vala的二维数组是废品

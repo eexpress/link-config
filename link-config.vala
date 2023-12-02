@@ -69,7 +69,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 
 拖放目录或者文件到下面的列表，均可建立备份""");
 	row.set_tooltip_text(tip);
-	var img = new Image.from_resource ("/io.github.eexpress/github.png");
+	var img = new Image.from_resource ("/io.github.eexpress/img/github.png");
 	img.set_pixel_size(48);
 	row.add_suffix(img);
 //~ 信息条

@@ -19,6 +19,7 @@ List<string> pluslist;
 Adw.ActionRow row;
 ListBox listbox;
 Label msg;
+ApplicationWindow window;
 
 string Git_Ls;
 string HomeDir;
@@ -36,15 +37,17 @@ int main(string[] args) {
 //~ --------------------------------------------------------------------
 void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的 Application
 //~ 窗口
-	var window = new ApplicationWindow(self as Gtk.Application);
+	window = new ApplicationWindow(self as Gtk.Application);
 	window.title = appTitle;
-	window.set_default_size(440, 480);
-	window.resizable = true;
+	window.set_default_size(440, 440);
+	window.resizable = false;
 //~ 底盒
-	var box = new Box(Orientation.VERTICAL, 5); box.set_margin_start(10);
+	var box = new Box(Orientation.VERTICAL, 5);
+	box.set_margin_start(10); box.set_margin_end(10);
+	box.set_margin_top(10); box.set_margin_bottom(10);
 //~ 列表
 	listbox = new ListBox();
-	listbox.hexpand = true;
+//~ 列表的占位控件
 	var x = new Label("");
 //~ 	x.set_markup("<span foreground=\"grey\" size=\"1000%\">空</span>");
 	x.set_markup(_("<span foreground=\"grey\" size=\"300%\">拖放文件目录到此</span>"));
@@ -66,13 +69,15 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 
 拖放目录或者文件到下面的列表，均可建立备份""");
 	row.set_tooltip_text(tip);
+	var img = new Image.from_resource ("/io.github.eexpress/github.png");
+	img.set_pixel_size(48);
+	row.add_suffix(img);
 //~ 信息条
 	msg = new Label("");
 	msg.halign = Align.START;
-	msg.margin_bottom=10;
 	msg.set_markup("<b>%s</b>. Ver 0.21.".printf(appID));
 //~ 按键组
-	var butbox = new Box(Orientation.HORIZONTAL, 5); box.set_margin_start(10);
+	var butbox = new Box(Orientation.HORIZONTAL, 5);
 	string[] btarr = {	// vala的二维数组是废品
 	// 图标，标签，提示
 		_("document-new-symbolic|添加备份|移动源文件过来，在源位置建立链接"),
@@ -94,7 +99,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	}
 // 获取执行文件路径，并切换工作目录。
 	HomeDir = Environment.get_home_dir();
-	Git_Ls = ex("git ls");
+	Git_Ls = exec("git ls");
 	try{
 		WorkDir = Path.get_dirname(FileUtils.read_link("/proc/self/exe"));
 	} catch (Error e) {error ("%s", e.message);}
@@ -123,9 +128,6 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	box.append(listbox);
 	box.append(butbox);
 	box.append(msg);
-	var img = new Image.from_resource ("/io.github.eexpress/github.png");
-
-	box.append(img);
 	window.present ();
 }
 //~ --------------------------------------------------------------------
@@ -172,10 +174,12 @@ async void on_chdir_clicked () {
 void refreshall(string s){
 	WorkDir = s;
 	Posix.chdir(WorkDir);	//切换工作目录
-	Git_Ls = ex("git ls");
+	Git_Ls = exec("git ls");
 	refreshListBox();		//刷新
 	string p = WorkDir.replace(HomeDir,"~");
 	row.subtitle=_("当前工作目录：")+"<span foreground=\"blue\"><b>%s</b></span>".printf(p);
+	window.set_size_request(100,100);
+	window.queue_resize();
 }
 //~ --------------------------------------------------------------------
 async void on_add_clicked () {
@@ -220,7 +224,7 @@ bool addfile(File Fconfig){	// 配置文件句柄
 		if (Fconfig.move(Fbackup,FileCopyFlags.NONE, null, null)){
 			if(Fconfig.make_symbolic_link(dst,null)){	// 注意方向：File是链接，string才是源文件。
 				pluslist.append(plusfile); appendListBox(plusfile);
-				ex("ls -l "+src); return true;
+				exec("ls -l "+src); return true;
 			}
 		};
 	} catch (Error e) {error ("%s", e.message);}
@@ -239,19 +243,19 @@ bool rmfile(string plusfile, bool moveORrestroe){	// 带+号文件名
 		if(moveORrestroe){
 //~ 	print("----\nrm %s; mv %s %s\n", src, dst, src);
 			if(Fbackup.move(Fconfig,FileCopyFlags.NONE, null, null)){
-				ex("ls -l "+src); return true;
+				exec("ls -l "+src); return true;
 			}
 		}else{
 //~ 	print("----\nrm %s; ln -sf %s %s\n", src, src, dst);
 			if(Fconfig.make_symbolic_link(dst,null)){
-				ex("ls -l "+src); return true;
+				exec("ls -l "+src); return true;
 			}
 		}
 	} catch (Error e) {error ("%s", e.message);}
 	return false;
 }
 //~ --------------------------------------------------------------------
-string ex(string cmd){
+string exec(string cmd){
 	string stdout, stderr; int status;
 	try{	//~ 简化版本的 spawn_sync。
 		Process.spawn_command_line_sync (cmd, out stdout, out stderr, out status);

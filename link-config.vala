@@ -69,9 +69,6 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 
 拖放目录或者文件到下面的列表，均可建立备份""");
 	row.set_tooltip_text(tip);
-	var img = new Image.from_resource ("/io.github.eexpress/img/github.png");
-	img.set_pixel_size(48);
-	row.add_suffix(img);
 //~ 信息条
 	msg = new Label("");
 	msg.halign = Align.START;
@@ -80,9 +77,10 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	var butbox = new Box(Orientation.HORIZONTAL, 5);
 	string[] btarr = {	// vala的二维数组是废品
 	// 图标，标签，提示
-		_("document-new-symbolic|添加备份|移动源文件过来，在源位置建立链接"),
+		_("document-new-symbolic|添加文件|移动源文件过来，在源位置建立链接"),
+		_("folder-new-symbolic|添加目录|移动源目录过来，在源位置建立链接"),
 		_("edit-delete-symbolic|取消备份|删除源链接，移动备份文件到源位置"),
-		_("insert-link|全部恢复|在源位置强行建立全部链接"),
+		_("insert-link|全部恢复|在源位置强行重新建立全部链接"),
 		_("go-home-symbolic|切换目录|切换当前工作目录")
 	};
 	for (var i = 0; i < btarr.length; i++){
@@ -95,8 +93,14 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 		bt.set_child(b);
 		var index = i;	// 不保存， lambda 输入就固定是4了。
 		bt.clicked.connect (()=>{click(index);});
-		butbox.append(bt);
+		if(index == btarr.length-1){
+			row.add_suffix(bt);
+		} else butbox.append(bt);
 	}
+//~ 标题加一个内嵌的图标
+	var img = new Image.from_resource ("/io.github.eexpress/img/github.png");
+	img.set_pixel_size(48);
+	row.add_suffix(img);
 // 获取执行文件路径，并切换工作目录。
 	HomeDir = Environment.get_home_dir();
 	Git_Ls = exec("git ls");
@@ -134,12 +138,14 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 void click(int i){
 	switch(i){
 		case 0:
-			on_add_clicked(); break;
+			on_add_clicked(true); break;
 		case 1:
-			on_rm_clicked(); break;
+			on_add_clicked(false); break;
 		case 2:
-			on_restore_clicked(); break;
+			on_rm_clicked(); break;
 		case 3:
+			on_restore_clicked(); break;
+		case 4:
 			on_chdir_clicked(); break;
 	}
 }
@@ -182,8 +188,8 @@ void refreshall(string s){
 	window.queue_resize();
 }
 //~ --------------------------------------------------------------------
-async void on_add_clicked () {
-	File ? f = yield filedialog(_("选择需要收集备份的配置文件"), true);
+async void on_add_clicked (bool Select_file) {
+	File ? f = yield filedialog(_("选择需要收集备份的配置文件"), Select_file);
 	if (f == null) return;
 	if(checkfile(f.get_parse_name())) addfile(f);
 }

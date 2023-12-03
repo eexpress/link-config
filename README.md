@@ -3,4 +3,4 @@ collect all important config files into git directory, link back those files to 
 
 ---
 
-![](link-config.adw.png)
+![](link-config.png)

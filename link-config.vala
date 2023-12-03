@@ -189,7 +189,7 @@ void refreshall(string s){
 }
 //~ --------------------------------------------------------------------
 async void on_add_clicked (bool Select_file) {
-	File ? f = yield filedialog(_("选择需要收集备份的配置文件"), Select_file);
+	File ? f = yield filedialog(_("选择需要备份的配置文件或目录"), Select_file);
 	if (f == null) return;
 	if(checkfile(f.get_parse_name())) addfile(f);
 }

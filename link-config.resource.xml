@@ -2,5 +2,8 @@
 <gresources>
 	<gresource prefix="/io.github.eexpress">
 	<file>img/github.png</file>
+	<file>img/github1.png</file>
+	<file>img/github2.png</file>
+	<file>img/github3.png</file>
 	</gresource>
 </gresources>

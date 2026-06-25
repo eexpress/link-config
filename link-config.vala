@@ -98,7 +98,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 		} else butbox.append(bt);
 	}
 //~ 标题加一个内嵌的图标
-	var img = new Image.from_resource ("/io.github.eexpress/img/github.png");
+	var img = new Image.from_resource ("/io.github.eexpress/img/github3.png");
 	img.set_pixel_size(48);
 	row.add_suffix(img);
 // 获取执行文件路径，并切换工作目录。

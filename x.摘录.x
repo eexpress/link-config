@@ -16,3 +16,10 @@ executable('link-config',
 
 
 
+#	--------▶  2026-06-25 16:27:50 ◀ --------
+⭕ git clone git@github.com:eexpress/link-config.git
+⭕ cd link-config
+⭕ sudo dnf install meson ninja vala glib2-devel libadwaita-devel cmake
+⭕ meson setup build
+⭕ ninja -C build
+

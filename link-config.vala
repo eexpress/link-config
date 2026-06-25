@@ -103,7 +103,7 @@ void onAppActivate(GLib.Application self) {	// 为什么这里必须是 GLib 的
 	row.add_suffix(img);
 // 获取执行文件路径，并切换工作目录。
 	HomeDir = Environment.get_home_dir();
-	Git_Ls = exec("git ls");
+	Git_Ls = exec("git ls-files");
 	try{
 		WorkDir = Path.get_dirname(FileUtils.read_link("/proc/self/exe"));
 	} catch (Error e) {error ("%s", e.message);}
@@ -180,7 +180,7 @@ async void on_chdir_clicked () {
 void refreshall(string s){
 	WorkDir = s;
 	Posix.chdir(WorkDir);	//切换工作目录
-	Git_Ls = exec("git ls");
+	Git_Ls = exec("git ls-files");
 	refreshListBox();		//刷新
 	string p = WorkDir.replace(HomeDir,"~");
 	row.subtitle=_("当前工作目录：")+"<span foreground=\"blue\"><b>%s</b></span>".printf(p);

@@ -26,6 +26,8 @@ string HomeDir;
 string WorkDir;
 string Flastpath;
 
+const bool DEBUG_LS = false;
+
 //~ --------------------------------------------------------------------
 int main(string[] args) {
 	var app = new Adw.Application(appID, ApplicationFlags.DEFAULT_FLAGS);
@@ -148,6 +150,7 @@ void click(int i){
 		case 4:
 			on_chdir_clicked(); break;
 	}
+	refreshListBox();
 }
 //~ --------------------------------------------------------------------
 void on_rm_clicked(){
@@ -230,7 +233,7 @@ bool addfile(File Fconfig){	// 配置文件句柄
 		if (Fconfig.move(Fbackup,FileCopyFlags.NONE, null, null)){
 			if(Fconfig.make_symbolic_link(dst,null)){	// 注意方向：File是链接，string才是源文件。
 				pluslist.append(plusfile); appendListBox(plusfile);
-				exec("ls -l "+src); return true;
+				if (DEBUG_LS) exec("ls -l "+src); return true;
 			}
 		};
 	} catch (Error e) {error ("%s", e.message);}
@@ -249,12 +252,12 @@ bool rmfile(string plusfile, bool moveORrestroe){	// 带+号文件名
 		if(moveORrestroe){
 //~ 	print("----\nrm %s; mv %s %s\n", src, dst, src);
 			if(Fbackup.move(Fconfig,FileCopyFlags.NONE, null, null)){
-				exec("ls -l "+src); return true;
+				if (DEBUG_LS) exec("ls -l "+src); return true;
 			}
 		}else{
 //~ 	print("----\nrm %s; ln -sf %s %s\n", src, src, dst);
 			if(Fconfig.make_symbolic_link(dst,null)){
-				exec("ls -l "+src); return true;
+				if (DEBUG_LS) exec("ls -l "+src); return true;
 			}
 		}
 	} catch (Error e) {error ("%s", e.message);}
@@ -270,7 +273,7 @@ string exec(string cmd){
 	return stdout;
 }
 //~ --------------------------------------------------------------------
-void refreshListBox(){	// remove_all 能工作后，可能需要多次调用。
+void refreshListBox(){	// remove_all 能工作后，可能需要多次调用。应该每一个按键都要刷新。
 //~ 	listbox.remove_all();	// not available in gtk4 4.10.5. Use gtk4 >= 4.12
 	listbox_remove_all();
 	listplusfile();

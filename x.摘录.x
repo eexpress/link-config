@@ -23,3 +23,9 @@ executable('link-config',
 ⭕ meson setup build
 ⭕ ninja -C build
 
+#	--------▶  2026-06-26 01:13:42 ◀ --------
+var dialog = new Gtk.FileDialog ();	// 显示隐藏文件，只能按 Ctrl-h
+
+#	--------▶  2026-06-26 01:16:22 ◀ --------
+void refreshListBox(){	// remove_all 能工作后，可能需要多次调用。
+
